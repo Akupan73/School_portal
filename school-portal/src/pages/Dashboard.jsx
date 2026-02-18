@@ -24,6 +24,7 @@ import {
 import SchoolIcon from '@mui/icons-material/School'
 import GradeIcon from '@mui/icons-material/Grade'
 import ScheduleIcon from '@mui/icons-material/Schedule'
+import { getProfile, getRegistered, getResults, getTimetable } from '../api'
 import { mockStudentProfile, mockRegisteredCourses, mockResults, mockTimetable } from '../data/mockData'
 import CourseRegistration from './CourseRegistration'
 import Results from './Results'
@@ -35,8 +36,30 @@ function TabPanel({ children, value, index }) {
 
 export default function Dashboard() {
   const [tabValue, setTabValue] = useState(0)
-  const upcomingClasses = mockTimetable.slice(0, 3)
-  const recentGrades = mockResults.slice(0, 2)
+  const [profile, setProfile] = useState(mockStudentProfile)
+  const [registeredCourses, setRegisteredCourses] = useState(mockRegisteredCourses)
+  const [results, setResults] = useState(mockResults)
+  const [timetable, setTimetable] = useState(mockTimetable)
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const p = await getProfile()
+        const reg = await getRegistered()
+        const res = await getResults()
+        const tt = await getTimetable()
+        setProfile(p)
+        setRegisteredCourses(reg)
+        setResults(res)
+        setTimetable(tt)
+      } catch (e) {
+        // fallback to mock data
+      }
+    })()
+  }, [])
+
+  const upcomingClasses = timetable.slice(0, 3)
+  const recentGrades = results.slice(0, 2)
 
   return (
     <div>
