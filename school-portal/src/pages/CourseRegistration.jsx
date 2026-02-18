@@ -19,15 +19,27 @@ import {
   Typography,
   Alert
 } from '@mui/material'
-import { mockAvailableCourses, mockRegisteredCourses } from '../data/mockData'
+import { getCourses, getRegistered, registerCourse, dropCourse } from '../api'
 
 export default function CourseRegistration() {
-  const [registered, setRegistered] = useState(
-    mockRegisteredCourses.map(c => c.id)
-  )
+  const [available, setAvailable] = useState([])
+  const [registered, setRegistered] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [message, setMessage] = useState('')
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const av = await getCourses()
+        const reg = await getRegistered()
+        setAvailable(av)
+        setRegistered(reg.map(c => c.id))
+      } catch (e) {
+        // ignore, fallback to client mock data
+      }
+    })()
+  }, [])
 
   const handleRegister = (course) => {
     setSelectedCourse(course)
@@ -35,21 +47,25 @@ export default function CourseRegistration() {
   }
 
   const confirmRegister = () => {
-    setRegistered([...registered, selectedCourse.id])
+    registerCourse(selectedCourse.id).then(() => {
+      setRegistered(prev => [...prev, selectedCourse.id])
+    }).catch(() => {})
     setMessage(`Successfully registered for ${selectedCourse.name}`)
     setOpen(false)
     setTimeout(() => setMessage(''), 4000)
   }
 
   const handleDrop = (courseId) => {
-    setRegistered(registered.filter(id => id !== courseId))
+    dropCourse(courseId).then(() => {
+      setRegistered(prev => prev.filter(id => id !== courseId))
+    }).catch(() => {})
     setMessage('Course dropped successfully')
     setTimeout(() => setMessage(''), 4000)
   }
 
   const isRegistered = (courseId) => registered.includes(courseId)
   const registeredCount = registered.length
-  const totalCredits = mockRegisteredCourses
+  const totalCredits = available
     .filter(c => isRegistered(c.id))
     .reduce((sum, c) => sum + c.credits, 0)
 
@@ -84,8 +100,8 @@ export default function CourseRegistration() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockRegisteredCourses
-              .filter(c => isRegistered(c.id))
+            {available
+              .filter(c => registered.includes(c.id))
               .map(course => (
                 <TableRow key={course.id}>
                   <TableCell>{course.code}</TableCell>
@@ -126,7 +142,7 @@ export default function CourseRegistration() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockAvailableCourses
+            {available
               .filter(c => !isRegistered(c.id))
               .map(course => (
                 <TableRow key={course.id}>

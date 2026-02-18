@@ -15,14 +15,27 @@ import {
   Tab,
   Chip
 } from '@mui/material'
+import { getTimetable } from '../api'
 import { mockTimetable } from '../data/mockData'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState(0)
+  const [timetable, setTimetable] = useState(mockTimetable)
 
-  const dayTimetable = mockTimetable.filter(item => item.day === DAYS[selectedDay])
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const tt = await getTimetable()
+        setTimetable(tt)
+      } catch (e) {
+        // fallback
+      }
+    })()
+  }, [])
+
+  const dayTimetable = timetable.filter(item => item.day === DAYS[selectedDay])
 
   return (
     <div>
@@ -108,7 +121,7 @@ export default function Timetable() {
             <TableBody>
               <TableRow>
                 {DAYS.map(day => {
-                  const count = mockTimetable.filter(t => t.day === day).length
+                    const count = timetable.filter(t => t.day === day).length
                   return (
                     <TableCell key={day} align="center">
                       <Typography variant="body2">

@@ -19,6 +19,7 @@ import {
   AccordionDetails
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { getResults } from '../api'
 import { mockResults } from '../data/mockData'
 
 function getGradeColor(letterGrade) {
@@ -31,10 +32,22 @@ function getGradeColor(letterGrade) {
 
 export default function Results() {
   const [selectedSemester] = useState('Fall 2025')
-  const semesterResults = mockResults.filter(r => r.semester === selectedSemester)
-  
-  const overallGPA = (semesterResults.reduce((sum, r) => sum + r.gpa, 0) / semesterResults.length).toFixed(2)
-  const totalCredits = semesterResults.reduce((sum, r) => sum + r.credits, 0)
+  const [results, setResults] = useState(mockResults)
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const res = await getResults()
+        setResults(res)
+      } catch (e) {
+        // fallback to mock
+      }
+    })()
+  }, [])
+
+  const semesterResults = results.filter(r => r.semester === selectedSemester)
+  const overallGPA = semesterResults.length ? (semesterResults.reduce((sum, r) => sum + r.gpa, 0) / semesterResults.length).toFixed(2) : 'N/A'
+  const totalCredits = semesterResults.reduce((sum, r) => sum + (r.credits || 0), 0)
 
   return (
     <div>
