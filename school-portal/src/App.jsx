@@ -28,6 +28,8 @@ import FacultyAttendance from './pages/FacultyAttendance'
 import PaymentModule from './payment/PaymentModule'
 import PaymentDetail from './payment/PaymentDetail'
 import ParentDashboard from './parent/ParentDashboard'
+import SchoolRegistration from './pages/SchoolRegistration'
+// Parent login uses the main parent dashboard under /parent
 
 export default function App() {
   const [role, setRole] = useState(localStorage.getItem('role') || null)
@@ -81,6 +83,7 @@ export default function App() {
           
           {/* Parent routes */}
           <Route path="/parent" element={<ParentDashboard />} />
+          <Route path="/school/register" element={<SchoolRegistration />} />
         </Routes>
       </Box>
     </Box>

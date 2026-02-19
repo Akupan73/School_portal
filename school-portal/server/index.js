@@ -32,6 +32,9 @@ db.data.sessions ||= []
 db.data.assignments ||= []
 db.data.grades ||= []
 db.data.attendance ||= []
+db.data.parents ||= []
+db.data.recommendations ||= []
+db.data.parentRegistrations ||= []
 
 // Admin: Akupan Desmond Ekwen
 const ADMIN_CREDENTIALS = {
@@ -105,6 +108,13 @@ if (!db.data._initialized) {
     { id: 'STU003', name: 'Mike Johnson', email: 'mike.johnson@school.com', enrollmentYear: 2024, gpa: 3.6, status: 'Active' }
   ]
 
+  // Sample parents for testing
+  db.data.parents = [
+    { id: 'PAR001', parentNumber: 'PAR001', parentName: 'John Smith', email: 'john.smith@email.com', phone: '+237123456789', childrenNames: 'John Doe', status: 'approved', createdAt: '2026-01-01' },
+    { id: 'PAR002', parentNumber: 'PAR002', parentName: 'Mary Johnson', email: 'mary.j@email.com', phone: '+237987654321', childrenNames: 'Jane Smith', status: 'approved', createdAt: '2026-01-02' },
+    { id: 'PAR003', parentNumber: 'PAR003', parentName: 'David Wilson', email: 'david.w@email.com', phone: '+237555666777', childrenNames: 'Mike Johnson', status: 'approved', createdAt: '2026-01-03' }
+  ]
+
   db.data._initialized = true
   await db.write()
 }
@@ -159,6 +169,90 @@ app.post('/api/login', async (req, res) => {
   }
 
   res.status(401).json({ error: 'Invalid credentials' })
+})
+
+// ============ PARENT LOGIN ROUTES ============
+app.post('/api/parent/login', async (req, res) => {
+  const { parentNumber } = req.body
+  await db.read()
+
+  const parent = db.data.parents.find(p => p.parentNumber === parentNumber && p.status === 'approved')
+  
+  if (!parent) {
+    return res.status(401).json({ success: false, message: 'Parent number not found or not approved' })
+  }
+
+  const token = 'parent_token_' + nanoid()
+  db.data.sessions.push({ token, role: 'parent', email: parent.email, parentNumber: parentNumber, createdAt: new Date().toISOString() })
+  await db.write()
+
+  res.json({
+    success: true,
+    parent: {
+      id: parent.id,
+      parentNumber: parent.parentNumber,
+      parentName: parent.parentName,
+      email: parent.email,
+      phone: parent.phone,
+      childrenNames: parent.childrenNames
+    },
+    token
+  })
+})
+
+// Submit recommendation for app
+app.post('/api/parent/recommend', async (req, res) => {
+  const { parentNumber, schoolName, message, timestamp } = req.body
+  await db.read()
+
+  const recommendation = {
+    id: nanoid(),
+    parentNumber,
+    schoolName,
+    message,
+    status: 'pending',
+    timestamp: timestamp || new Date().toISOString(),
+    createdAt: new Date().toISOString()
+  }
+
+  db.data.recommendations.push(recommendation)
+  await db.write()
+
+  res.json({ success: true, recommendation })
+})
+
+// Register as new parent
+app.post('/api/parent/register', async (req, res) => {
+  const { parentNumber, parentName, email, phone, childrenNames, timestamp } = req.body
+  await db.read()
+
+  const registration = {
+    id: nanoid(),
+    parentNumber,
+    parentName,
+    email,
+    phone,
+    childrenNames,
+    status: 'pending',
+    timestamp: timestamp || new Date().toISOString(),
+    createdAt: new Date().toISOString()
+  }
+
+  db.data.parentRegistrations.push(registration)
+  await db.write()
+
+  res.json({ success: true, registration })
+})
+
+// Get parent children
+app.get('/api/parent/children', authenticate, async (req, res) => {
+  await db.read()
+  // Return mock children data - in a real app, this would be from a relational database
+  const children = [
+    { id: 'STU001', name: 'John Doe', studentId: 'STU001', grade: '10A', courses: ['CS101', 'MATH201'] },
+    { id: 'STU002', name: 'Jane Doe', studentId: 'STU002', grade: '9B', courses: ['ENG150', 'PHYS150'] }
+  ]
+  res.json({ success: true, children })
 })
 
 // ============ AUTH MIDDLEWARE ============
@@ -549,6 +643,60 @@ app.post('/api/admin/news', async (req, res) => {
   db.data.news.push(newsItem)
   await db.write()
   res.json({ success: true, news: newsItem })
+})
+
+// ============ ADMIN PARENT MANAGEMENT ============
+app.get('/api/admin/recommendations', async (req, res) => {
+  await db.read()
+  res.json({
+    recommendations: db.data.recommendations || [],
+    registrations: db.data.parentRegistrations || []
+  })
+})
+
+app.post('/api/admin/recommendations/:id/approve', async (req, res) => {
+  const { id } = req.params
+  await db.read()
+  
+  const rec = db.data.recommendations.find(r => r.id === id)
+  if (!rec) return res.status(404).json({ error: 'Recommendation not found' })
+  
+  rec.status = 'approved'
+  rec.approvedAt = new Date().toISOString()
+  
+  // Automatically create parent account if not exists
+  const existingParent = db.data.parents.find(p => p.parentNumber === rec.parentNumber)
+  if (!existingParent) {
+    db.data.parents.push({
+      id: nanoid(),
+      parentNumber: rec.parentNumber,
+      parentName: 'Parent - ' + rec.schoolName,
+      email: 'parent@' + rec.schoolName.toLowerCase().replace(/\s+/g, '') + '.com',
+      phone: '+237000000000',
+      childrenNames: 'TBD',
+      status: 'approved',
+      createdAt: new Date().toISOString()
+    })
+  } else {
+    existingParent.status = 'approved'
+  }
+  
+  await db.write()
+  res.json({ success: true, message: 'Recommendation approved' })
+})
+
+app.post('/api/admin/recommendations/:id/reject', async (req, res) => {
+  const { id } = req.params
+  await db.read()
+  
+  const rec = db.data.recommendations.find(r => r.id === id)
+  if (!rec) return res.status(404).json({ error: 'Recommendation not found' })
+  
+  rec.status = 'rejected'
+  rec.rejectedAt = new Date().toISOString()
+  
+  await db.write()
+  res.json({ success: true, message: 'Recommendation rejected' })
 })
 
 app.listen(4000, () => {

@@ -13,6 +13,7 @@ import AnnouncementIcon from '@mui/icons-material/Announcement'
 import NewspaperIcon from '@mui/icons-material/Newspaper'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import { Link as RouterLink } from 'react-router-dom'
 
 const drawerWidth = 240
@@ -72,6 +73,12 @@ export default function AdminSidebar() {
             <MenuBookIcon />
           </ListItemIcon>
           <ListItemText primary="Resources" />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/admin/parent-notifications">
+          <ListItemIcon>
+            <NotificationsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Parent Notifications" />
         </ListItem>
       </List>
       <Divider />

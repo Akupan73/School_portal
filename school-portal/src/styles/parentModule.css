@@ -1,0 +1,19 @@
+.parent-module-list {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(25,118,210,0.08);
+  padding: 12px;
+}
+
+.parent-module-list .MuiListItem-root {
+  border-bottom: 1px solid #f0f4ff;
+}
+
+.parent-module-list .MuiListItem-root:last-child {
+  border-bottom: none;
+}
+
+.parent-module-flag {
+  color: #1976d2;
+  font-weight: 700;
+}
