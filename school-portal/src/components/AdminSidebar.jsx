@@ -46,6 +46,18 @@ export default function AdminSidebar() {
           </ListItemIcon>
           <ListItemText primary="Courses" />
         </ListItem>
+        <ListItem button component={RouterLink} to="/admin/attendance">
+          <ListItemIcon>
+            <AssignmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Attendance" />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/admin/fees">
+          <ListItemIcon>
+            <MenuBookIcon />
+          </ListItemIcon>
+          <ListItemText primary="Fees" />
+        </ListItem>
       </List>
       <Divider />
       <List>

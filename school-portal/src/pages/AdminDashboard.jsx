@@ -12,9 +12,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip
+  Chip,
+  Button
 } from '@mui/material'
 import PeopleIcon from '@mui/icons-material/People'
+import { Link as RouterLink } from 'react-router-dom'
 import SchoolIcon from '@mui/icons-material/School'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
@@ -60,6 +62,17 @@ export default function AdminDashboard() {
       </Box>
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid item xs={12}>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6">Quick Access</Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              <Button size="small" component={RouterLink} to="/admin/students">Manage Students</Button>
+              <Button size="small" component={RouterLink} to="/admin/courses">Manage Courses</Button>
+              <Button size="small" component={RouterLink} to="/admin/attendance">Attendance Reports</Button>
+              <Button size="small" component={RouterLink} to="/admin/fees">Fee Management</Button>
+            </Box>
+          </Box>
+        </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>

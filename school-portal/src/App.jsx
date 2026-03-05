@@ -19,6 +19,8 @@ import Assignments from './pages/Assignments'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminStudents from './pages/AdminStudents'
 import AdminCourses from './pages/AdminCourses'
+import AdminAttendance from './pages/AdminAttendance'
+import AdminFees from './pages/AdminFees'
 import AdminNews from './pages/AdminNews'
 import AdminApplications from './pages/AdminApplications'
 import AdminResources from './pages/AdminResources'
@@ -42,6 +44,7 @@ export default function App() {
 
   const isAdmin = role === 'admin'
   const isFaculty = role === 'faculty'
+  const isParent = role === 'parent'
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -49,7 +52,7 @@ export default function App() {
       {isAdmin ? <AdminSidebar /> : isFaculty ? <FacultySidebar /> : <Sidebar />}
       <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
         <Routes>
-          <Route path="/" element={<Navigate to={isAdmin ? '/admin/dashboard' : '/dashboard'} replace />} />
+          <Route path="/" element={<Navigate to={isAdmin ? '/admin/dashboard' : isParent ? '/parent' : '/dashboard'} replace />} />
           {/* Student routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
@@ -70,6 +73,8 @@ export default function App() {
           <Route path="/admin/news" element={<ProtectedRoute requiredRole="admin"><AdminNews /></ProtectedRoute>} />
           <Route path="/admin/applications" element={<ProtectedRoute requiredRole="admin"><AdminApplications /></ProtectedRoute>} />
           <Route path="/admin/resources" element={<ProtectedRoute requiredRole="admin"><AdminResources /></ProtectedRoute>} />
+          <Route path="/admin/attendance" element={<ProtectedRoute requiredRole="admin"><AdminAttendance /></ProtectedRoute>} />
+          <Route path="/admin/fees" element={<ProtectedRoute requiredRole="admin"><AdminFees /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
 
           {/* Faculty routes */}
