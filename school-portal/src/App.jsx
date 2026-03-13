@@ -25,11 +25,14 @@ import AdminResources from './pages/AdminResources'
 import FacultyCourses from './pages/FacultyCourses'
 import FacultyGrades from './pages/FacultyGrades'
 import FacultyAttendance from './pages/FacultyAttendance'
-import PaymentModule from './payment/PaymentModule'
-import PaymentDetail from './payment/PaymentDetail'
-import ParentDashboard from './parent/ParentDashboard'
+ 
 import SchoolRegistration from './pages/SchoolRegistration'
 // Parent login uses the main parent dashboard under /parent
+import ParentDashboard from './parent/ParentDashboard'
+import FeePayment from "./pages/FeePayment/FeePayment"
+/* Admin dashboards for fee management */
+import AdminFeeDashboard from "./pages/Admin/AdminFeeDashboard"
+
 
 export default function App() {
   const [role, setRole] = useState(localStorage.getItem('role') || null)
@@ -53,16 +56,16 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to={isAdmin ? '/admin/dashboard' : '/dashboard'} replace />} />
           {/* Student routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={ <Dashboard /> } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/courses" element={<ProtectedRoute><CourseRegistration /></ProtectedRoute>} />
-          <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
-          <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+          <Route path="/courses" element={ <CourseRegistration /> } />
+          <Route path="/results" element={ <Results /> } />
+          <Route path="/timetable" element={ <Timetable /> } />
           <Route path="/news" element={<NewsAnnouncements />} />
-          <Route path="/messages" element={<ProtectedRoute><Messaging /></ProtectedRoute>} />
-          <Route path="/resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
-          <Route path="/assignments" element={<ProtectedRoute><Assignments /></ProtectedRoute>} />
+          <Route path="/messages" element={ <Messaging /> } />
+          <Route path="/resources" element={ <Resources /> } />
+          <Route path="/assignments" element={ <Assignments /> } />
 
           {/* Admin routes */}
           <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
@@ -78,9 +81,11 @@ export default function App() {
           <Route path="/faculty/courses" element={<ProtectedRoute requiredRole="faculty"><FacultyCourses /></ProtectedRoute>} />
           <Route path="/faculty/grades" element={<ProtectedRoute requiredRole="faculty"><FacultyGrades /></ProtectedRoute>} />
           <Route path="/faculty/attendance" element={<ProtectedRoute requiredRole="faculty"><FacultyAttendance /></ProtectedRoute>} />
-          <Route path="/payment" element={<ProtectedRoute><PaymentModule /></ProtectedRoute>} />
-          <Route path="/payment/:id" element={<ProtectedRoute><PaymentDetail /></ProtectedRoute>} />
-          
+          <Route path='/payment' element={<PaymentModule/>} />
+            
+          {/* Payment routes */}
+          <Route path="/FeePayment" element={<FeePayment />} />
+            <Route path="/admin-fees" element={<AdminFeeDashboard />} />
           {/* Parent routes */}
           <Route path="/parent" element={<ParentDashboard />} />
           <Route path="/school/register" element={<SchoolRegistration />} />

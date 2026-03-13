@@ -74,24 +74,7 @@ export default function Login() {
         </Box>
 
         <Divider sx={{ my: 3 }} />
-        
-        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-          <strong>Demo Credentials:</strong>
-        </Typography>
-        <Box sx={{ backgroundColor: '#f5f5f5', p: 2, borderRadius: 1, mb: 2 }}>
-          <Typography variant="body2">
-            <strong>Admin (Akupan Desmond Ekwen):</strong><br />
-            akupandesmondekwen947@gmail.com<br />
-            D1010@yaho.com
-          </Typography>
-        </Box>
-        <Box sx={{ backgroundColor: '#f5f5f5', p: 2, borderRadius: 1 }}>
-          <Typography variant="body2">
-            <strong>Student (Demo):</strong><br />
-            john.doe@school.com<br />
-            student123
-          </Typography>
-        </Box>
+         
       </Paper>
     </Box>
   )

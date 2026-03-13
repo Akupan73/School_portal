@@ -21,7 +21,7 @@ export default function Login() {
         localStorage.setItem('role', result.role)
         localStorage.setItem('token', result.token)
         if (result.role === 'admin') {
-          navigate('/admin/dashboard')
+          navigate('/Admin/AdminFeeDashboard')
         } else if (result.role === 'faculty') {
           navigate('/faculty/courses')
         } else {
@@ -45,6 +45,15 @@ export default function Login() {
         </Typography>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            label="UserNmae"
+            fullWidth
+            margin="normal"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your User"
+          />
           <TextField
             label="Email"
             fullWidth
@@ -78,30 +87,7 @@ export default function Login() {
 
         <Divider sx={{ my: 3 }} />
         
-        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-          <strong>Demo Credentials:</strong>
-        </Typography>
-        <Box sx={{ backgroundColor: '#f5f5f5', p: 2, borderRadius: 1, mb: 2 }}>
-          <Typography variant="body2">
-            <strong>Admin (Akupan Desmond Ekwen):</strong><br />
-            akupandesmondekwen947@gmail.com<br />
-            D1010@yaho.com
-          </Typography>
-        </Box>
-        <Box sx={{ backgroundColor: '#f5f5f5', p: 2, borderRadius: 1 }}>
-          <Typography variant="body2">
-            <strong>Student (Demo):</strong><br />
-            john.doe@school.com<br />
-            student123
-          </Typography>
-        </Box>
-        <Box sx={{ backgroundColor: '#f5f5f5', p: 2, borderRadius: 1, mt: 2 }}>
-          <Typography variant="body2">
-            <strong>Faculty (Demo):</strong><br />
-            prof.jones@school.com<br />
-            faculty123
-          </Typography>
-        </Box>
+         
       </Paper>
     </Box>
   )

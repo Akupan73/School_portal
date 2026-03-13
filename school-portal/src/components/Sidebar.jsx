@@ -14,6 +14,9 @@ import MailIcon from '@mui/icons-material/Mail'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { Link as RouterLink } from 'react-router-dom'
+import { Link } from "react-router-dom";
+
+
 
 const drawerWidth = 240
 
@@ -52,8 +55,17 @@ export default function Sidebar() {
           </ListItemIcon>
           <ListItemText primary="Timetable" />
         </ListItem>
+        
+        <ListItem button component={RouterLink} to="/FeePayment">
+          <ListItemIcon>
+            <GradeIcon /> 
+          </ListItemIcon>
+          <ListItemText primary="Payments" />
+        </ListItem>
+         
       </List>
       <Divider />
+       
       <List>
         <ListItem button component={RouterLink} to="/news">
           <ListItemIcon>

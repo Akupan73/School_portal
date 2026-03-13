@@ -117,9 +117,7 @@ const ParentDashboard = () => {
                             Verify
                         </Button>
                     </Box>
-                    <Typography variant="caption" sx={{ mt: 2, display: 'block', color: 'gray' }}>
-                        Try: +1 with 555-0001, +1 with 555-0002, +44-20 with 1234-5678, +91 with 9876543210, +86-10 with 1234-5678, +81-3 with 1234-5678, or +237 with 650000000 (Cameroon)
-                    </Typography>
+                    
 
                     {notFound && (
                         <Box sx={{ mt: 3 }}>

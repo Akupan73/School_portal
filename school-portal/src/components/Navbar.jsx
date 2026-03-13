@@ -49,6 +49,9 @@ export default function Navbar() {
             <Typography variant="body2" sx={{ mr: 2 }}>
               {user.name}
             </Typography>
+            <Button color="inherit" component={RouterLink} to="/payment" sx={{ mr: 1 }}>
+              💳 Payment
+            </Button>
             <IconButton color="inherit" component={RouterLink} to="/messages" sx={{ mr: 1 }}>
               <Badge badgeContent={unread} color="error">
                 <MailIcon />
