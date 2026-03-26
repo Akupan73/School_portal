@@ -89,6 +89,9 @@ export async function addCourse(code, name, instructor, credits, schedule, capac
 }
 export async function updateCourse(courseId, data) { return putJson(`/api/admin/courses/${courseId}`, data) }
 export async function deleteCourse(courseId) { return deleteJson(`/api/admin/courses/${courseId}`) }
+
+export async function getAdminAttendance() { return getJson('/api/admin/attendance') }
+export async function getAdminFees() { return getJson('/api/admin/fees') }
 export async function postAnnouncement(title, message, priority) { return postJson('/api/admin/announcements', { title, message, priority }) }
 export async function getAdminNews() { return getJson('/api/admin/news') }
 export async function postNews(title, content) { return postJson('/api/admin/news', { title, content }) }

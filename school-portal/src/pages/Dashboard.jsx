@@ -19,13 +19,14 @@ import {
   Paper,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
+  Divider
 } from '@mui/material'
 import SchoolIcon from '@mui/icons-material/School'
 import GradeIcon from '@mui/icons-material/Grade'
 import ScheduleIcon from '@mui/icons-material/Schedule'
-import { getProfile, getRegistered, getResults, getTimetable } from '../api'
-import { mockStudentProfile, mockRegisteredCourses, mockResults, mockTimetable } from '../data/mockData'
+import { getProfile, getRegistered, getResults, getTimetable, getAnnouncements } from '../api'
+import { mockStudentProfile, mockRegisteredCourses, mockResults, mockTimetable, mockNotifications, mockCalendarEvents, mockAttendanceRecord } from '../data/mockData'
 import CourseRegistration from './CourseRegistration'
 import Results from './Results'
 import Timetable from './Timetable'
@@ -40,18 +41,25 @@ export default function Dashboard() {
   const [registeredCourses, setRegisteredCourses] = useState(mockRegisteredCourses)
   const [results, setResults] = useState(mockResults)
   const [timetable, setTimetable] = useState(mockTimetable)
+  const [announcements, setAnnouncements] = useState([])
+  const [notifications, setNotifications] = useState(mockNotifications)
+  const [calendar, setCalendar] = useState(mockCalendarEvents)
 
   React.useEffect(() => {
     (async () => {
       try {
-        const p = await getProfile()
-        const reg = await getRegistered()
-        const res = await getResults()
-        const tt = await getTimetable()
+        const [p, reg, res, tt, ann] = await Promise.all([
+          getProfile(),
+          getRegistered(),
+          getResults(),
+          getTimetable(),
+          getAnnouncements()
+        ])
         setProfile(p)
         setRegisteredCourses(reg)
         setResults(res)
         setTimetable(tt)
+        setAnnouncements(ann || [])
       } catch (e) {
         // fallback to mock data
       }
@@ -60,6 +68,8 @@ export default function Dashboard() {
 
   const upcomingClasses = timetable.slice(0, 3)
   const recentGrades = results.slice(0, 2)
+  const today = new Date().toISOString().slice(0,10)
+  const upcomingEvents = calendar.filter(ev => ev.date >= today).slice(0,3)
 
   return (
     <div>
@@ -67,13 +77,58 @@ export default function Dashboard() {
         <Typography variant="h4">Dashboard</Typography>
         <Box>
           <Typography variant="body2" color="textSecondary">
-            {mockStudentProfile.name}
+            {profile.name}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {mockStudentProfile.id}
+            {profile.id}
           </Typography>
         </Box>
       </Box>
+      {/* quick links */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6">Quick Links</Typography>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button size="small" component="a" href="/timetable">Timetable</Button>
+          <Button size="small" component="a" href="/results">Results</Button>
+          <Button size="small" component="a" href="/courses">Courses</Button>
+          <Button size="small" component="a" href="/news">News</Button>
+          <Button size="small" component="a" href="/assignments">Assignments</Button>
+          <Button size="small" component="a" href="/resources">Resources</Button>
+        </Box>
+      </Box>
+      {/* announcements */}
+      {announcements.length > 0 && (
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>Announcements</Typography>
+            <List dense>
+              {announcements.map(a => (
+                <ListItem key={a.id}>
+                  <ListItemText
+                    primary={a.title}
+                    secondary={a.message}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      )}
+      {/* notifications */}
+      {notifications.length > 0 && (
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>Notifications</Typography>
+            <List dense>
+              {notifications.map(n => (
+                <ListItem key={n.id}>
+                  <ListItemText primary={n.message} secondary={n.date} />
+                </ListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Cards */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
@@ -134,6 +189,20 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Grid>
+        {/* Attendance record card */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Attendance
+              </Typography>
+              <Typography variant="h5">{mockAttendanceRecord.percentage}%</Typography>
+              <Typography variant="caption" color="textSecondary">
+                ({mockAttendanceRecord.present}/{mockAttendanceRecord.total} days)
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
 
       {/* Upcoming Classes */}
@@ -176,6 +245,22 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Grid>
+        {upcomingEvents.length > 0 && (
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Calendar Events</Typography>
+                <List dense>
+                  {upcomingEvents.map(ev => (
+                    <ListItem key={ev.id}>
+                      <ListItemText primary={ev.title} secondary={ev.date} />
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
       </Grid>
 
       {/* Tabs for Features */}
